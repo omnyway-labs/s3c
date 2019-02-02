@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  test:
+    parallelism: 1
+    working_directory: ~/s3c
+    docker:
+      - image: omnyway/vulcan:latest
+    environment:
+      - SERVICE_NAME: s3c
+    steps:
+      - checkout
+      - run: vulcan test -s unit
+  release:
+    parallelism: 1
+    working_directory: ~/s3c
+    docker:
+      - image: omnyway/vulcan:latest
+    environment:
+      - VERSION_FILE: ../VERSION
+      - SERVICE_NAME: s3c
+    steps:
+      - checkout
+      - run: vulcan next-tag > $VERSION_FILE
+      - run: export SEMVER=$(cat $VERSION_FILE); github-release release --user omnyway-labs --repo s3c --tag $SEMVER  --target $CIRCLE_SHA1
+workflows:
+  version: 2
+  build_test_release:
+    jobs:
+      - test
+      - release:
+          requires:
+            - test
+          filters:
+            branches:
+              only: master
