@@ -23,8 +23,8 @@
 (defn list-keys [bucket prefix]
   (try
     (ob/list-keys bucket prefix)
-    (catch Exception
-        nil)))
+    (catch Exception e
+      nil)))
 
 (defn copy [bucket src-key dst-key]
   (error-as-value

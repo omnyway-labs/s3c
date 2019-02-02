@@ -10,7 +10,7 @@
    [com.amazonaws.util IOUtils]))
 
 (defn str->stream
-  ([s] (to-str s "UTF-8"))
+  ([s] (str->stream s "UTF-8"))
   ([s encoding]
    (-> (.getBytes s encoding)
        (ByteArrayInputStream.))))
