@@ -66,6 +66,9 @@
       (acl/update bucket key))
     (url bucket key))))
 
+(defn list-common-prefixes [bucket]
+  (ob/list-common-prefixes bucket))
+
 (defn parse-path [path]
   (let [[_ bucket key _]  (re-matches #"^s3://([^/]+)/(.*?([^/]+)/?)$" path)]
     {:bucket bucket
@@ -80,6 +83,7 @@
    (when-let [keys (list-keys bucket prefix)]
      (-> (select/query bucket keys filters)
          (stream/write-seq out-file)))))
+
 
 (defn init! [auth]
   (client/init! auth))

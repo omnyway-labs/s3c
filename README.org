@@ -23,6 +23,9 @@ An opinionated Clojure Library for AWS S3
 
 (s3/list-keys bucket prefix)
 
+(s3/list-common-prefixes bucket)
+;=> returns list of top-level root prefixes
+
 #+END_SRC
 
 ** select
