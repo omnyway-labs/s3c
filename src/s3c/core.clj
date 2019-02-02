@@ -21,7 +21,10 @@
    (ob/create-bucket bucket)))
 
 (defn list-keys [bucket prefix]
-  (ob/list-keys bucket prefix))
+  (try
+    (ob/list-keys bucket prefix)
+    (catch Exception
+        nil)))
 
 (defn copy [bucket src-key dst-key]
   (error-as-value
@@ -70,11 +73,11 @@
 
 (defn select
   ([bucket prefix filters]
-   (let [keys (list-keys bucket prefix)]
+   (when-let [keys (list-keys bucket prefix)]
      (-> (select/query bucket keys filters)
          (stream/read-seq))))
   ([bucket prefix filters out-file]
-   (let [keys (list-keys bucket prefix)]
+   (when-let [keys (list-keys bucket prefix)]
      (-> (select/query bucket keys filters)
          (stream/write-seq out-file)))))
 
