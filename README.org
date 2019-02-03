@@ -51,7 +51,7 @@ Add below to deps.edn
 
 #+END_SRC
 
-** AWS s3-select wrappers
+** AWS s3-select Wrappers
 
 =s3c= makes it easy to use EDN maps as filters in =select= param
 
