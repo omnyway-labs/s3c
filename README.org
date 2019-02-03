@@ -53,8 +53,7 @@ Add below to deps.edn
 
 ** AWS s3-select wrappers
 
-s3c provides a simplified wrapper to =s3-select=. It makes it easy to
-use EDN maps as filters to select.
+=s3c= makes it easy to use EDN maps as filters in =select= param
 
 Below is an idiomatic way to use s3-select
 
