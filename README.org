@@ -8,7 +8,22 @@ An opinionated Clojure Library for AWS S3
 (s3/init! {:provider :profile
            :profile (System/getenv "AWS_PROFILE")})
 
-(s3/put bucket key stream)
+(s3/put bucket key stream metadata)
+
+;; example
+(s3/put bucket "foo.png"
+        (io/input-stream (.getBytes "text"))
+        {:content-type "image/png"})
+
+;=> https//bucket.s3.amazonaws.com/foo.png
+
+;; put also takes an ACL idenitifer or map
+
+(s3/put bucket key stream metadata acl)
+
+(s3/put bucket key stream metadata :public)
+;; makes it world readable
+
 (s3/get bucket key)
 
 ;; for string puts and gets

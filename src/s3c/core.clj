@@ -26,9 +26,13 @@
     (catch Exception e
       nil)))
 
-(defn copy [bucket src-key dst-key]
+(defn copy [bucket src-key dst-bucket dst-key]
   (error-as-value
-   (ob/copy bucket src-key dst-key)))
+   (ob/copy bucket src-key dst-bucket dst-key)))
+
+(defn copy-prefix [src-bucket src-prefix dst-bucket dst-prefix]
+  (error-as-value
+   (ob/copy-prefix src-bucket src-prefix dst-bucket dst-prefix)))
 
 (defn delete [bucket key]
   (error-as-value
@@ -54,12 +58,15 @@
         (stream/stream->str))))
 
 (defn put
+  ([bucket key filename]
+   (ob/put-file bucket key filename))
   ([bucket key input-stream metadata]
    (error-as-value
-    (ob/put bucket key input-stream metadata)))
+    (ob/put bucket key input-stream metadata)
+    (url bucket key)))
   ([bucket key input-stream metadata acl]
    (error-as-value
-    (ob/put bucket key input-stream metadata acl)
+    (ob/put bucket key input-stream metadata)
     (if (or (= acl :public) (nil? acl))
       (->> (acl/grant-world-readable)
            (acl/update bucket key))

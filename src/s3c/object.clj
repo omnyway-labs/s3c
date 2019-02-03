@@ -14,6 +14,7 @@
     CopyObjectRequest
     PutObjectRequest
     DeleteObjectRequest
+    DeleteObjectsRequest
     ObjectMetadata
     AccessControlList
     GroupGrantee
@@ -24,6 +25,12 @@
          (.withBucketName bucket)
          (.withKey key))
        (.deleteObject (client/lookup))))
+
+(defn delete-keys [bucket keys]
+  (->> (doto (DeleteObjectsRequest. bucket)
+         (.withBucketName bucket)
+         (.withKeys keys))
+       (.deleteObjects (client/lookup))))
 
 (defn- as-keys [res]
   {:token (.getNextContinuationToken res)
@@ -52,12 +59,28 @@
       (recur (list-keys* bucket prefix token)
              (conj acc keys)))))
 
-(defn copy [bucket src-key dst-key]
-  (->> (doto (CopyObjectRequest. bucket
+(defn copy [src-bucket src-key dst-bucket dst-key]
+  (->> (doto (CopyObjectRequest. src-bucket
                                  src-key
-                                 bucket
+                                 dst-bucket
                                  dst-key))
        (.copyObject (client/lookup))))
+
+(defn make-dst-key [src-prefix dst-prefix key]
+  (if (empty? src-prefix)
+    key
+    (let [actual (->> (re-pattern (str src-prefix "/"))
+                      (str/split key)
+                      (second))]
+      (if (empty? dst-prefix)
+        actual
+        (str dst-prefix "/" actual)))))
+
+(defn copy-prefix [src-bucket src-prefix dst-bucket dst-prefix]
+  (doseq [k (list-keys src-bucket src-prefix)]
+    (let [dst-key (make-dst-key src-prefix dst-prefix k)]
+      (prn k dst-key)
+      (copy src-bucket k dst-bucket dst-key))))
 
 (defn s3-url [bucket key]
   (.getResourceUrl (client/lookup) bucket key))
@@ -71,10 +94,26 @@
        (PutObjectRequest. bucket key input-stream)
        (.putObject (client/lookup))))
 
+(defn put-file [bucket key file]
+  (let [f (io/as-file file)]
+    (when (.exists f)
+      (PutObjectRequest. bucket key f))))
+
 (defn get [bucket key]
   (->> (GetObjectRequest. bucket key)
        (.getObject (client/lookup))
        (.getObjectContent)))
+
+(defn get-file [bucket key file]
+  (let [req (GetObjectRequest. bucket key)
+        f   (io/as-file file)]
+    (->> (.getObject (client/lookup) req f)
+         (.getObjectContent))))
+
+(defn get-as-str [bucket key]
+  (->> (GetObjectRequest. bucket key)
+       (.getObject (client/lookup))
+       (.getObjectAsString)))
 
 (defn delete [bucket key]
   (.delete-object (client/lookup) bucket key))

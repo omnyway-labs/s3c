@@ -1,6 +1,7 @@
 (ns s3c.core-test
   (:require
    [clojure.test :refer :all]
+   [clojure.java.io :as io]
    [saw.core :as saw]
    [s3c.core :as s3]))
 
@@ -23,6 +24,12 @@
            (do
              (s3/put-str test-bucket "test.txt" "foo")
              (s3/get-str test-bucket "test.txt")))))
+
+  (testing "Put and Get test"
+    (is (= (format "https://%s.s3.amazonaws.com/foo.png" test-bucket)
+           (s3/put test-bucket "foo.png"
+                   (io/input-stream (.getBytes "text"))
+                   {:content-type "image/png"}))))
 
   (is (= ["test.txt"]
          (s3/list-keys test-bucket "test.txt")))
