@@ -128,9 +128,10 @@
   (->> (.listBuckets (client/lookup))
        (map #(.getName %))))
 
-(defn list-common-prefixes [bucket]
+(defn list-common-prefixes [bucket prefix]
   (->> (doto (ListObjectsV2Request.)
          (.withBucketName bucket)
-         (.withDelimiter "/"))
+         (.withDelimiter "/")
+         (.withPrefix prefix))
        (.listObjectsV2 (client/lookup))
        (.getCommonPrefixes)))
