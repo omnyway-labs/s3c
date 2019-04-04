@@ -111,9 +111,7 @@
          (.getObjectContent))))
 
 (defn get-as-str [bucket key]
-  (->> (GetObjectRequest. bucket key)
-       (.getObject (client/lookup))
-       (.getObjectAsString)))
+  (.getObjectAsString (client/lookup) bucket key))
 
 (defn delete [bucket key]
   (.delete-object (client/lookup) bucket key))
