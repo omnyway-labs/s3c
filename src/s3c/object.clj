@@ -115,9 +115,6 @@
        (.getObject (client/lookup))
        (.getObjectAsString)))
 
-(defn delete [bucket key]
-  (.delete-object (client/lookup) bucket key))
-
 (defn bucket-exists? [bucket]
   (.doesBucketExist (client/lookup) bucket))
 
