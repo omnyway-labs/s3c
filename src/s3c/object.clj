@@ -97,7 +97,8 @@
 (defn put-file [bucket key file]
   (let [f (io/as-file file)]
     (when (.exists f)
-      (PutObjectRequest. bucket key f))))
+      (->> (PutObjectRequest. bucket key f)
+           (.putObject (client/lookup))))))
 
 (defn get [bucket key]
   (->> (GetObjectRequest. bucket key)
