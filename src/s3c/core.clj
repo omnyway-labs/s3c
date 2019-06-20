@@ -46,6 +46,14 @@
 (defn url [bucket key]
   (ob/s3-url bucket key))
 
+(defn generate-presigned-url
+  "Returns a pre-signed URL for accessing an Amazon S3 resource"
+  ([bucket key expiration-date]
+   (generate-presigned-url bucket key expiration-date :get))
+  ([bucket key expiration-date http-method]
+   (error-as-value
+    (ob/generate-presigned-url bucket key expiration-date http-method))))
+
 (defn put-str [bucket key text]
   (let [stream   (stream/str->stream text)
         metadata {:content-type "text"}]

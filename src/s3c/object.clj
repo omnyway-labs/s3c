@@ -8,6 +8,7 @@
    [s3c.client :as client]
    [s3c.acl :as acl])
   (:import
+   (com.amazonaws HttpMethod)
    (com.amazonaws.services.s3.model
     ListObjectsV2Request
     GetObjectRequest
@@ -136,3 +137,13 @@
          (.withPrefix prefix))
        (.listObjectsV2 (client/lookup))
        (.getCommonPrefixes)))
+
+(defn generate-presigned-url [bucket key expiration-time http-method]
+  (let [method (HttpMethod/valueOf (-> http-method
+                                       name
+                                       str/upper-case))]
+    (.generatePresignedUrl (client/lookup)
+                           bucket
+                           key
+                           expiration-time
+                           method)))
