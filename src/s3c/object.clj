@@ -19,7 +19,8 @@
     ObjectMetadata
     AccessControlList
     GroupGrantee
-    Permission)))
+    Permission
+    GeneratePresignedUrlRequest)))
 
 (defn delete [bucket key]
   (->> (doto (DeleteObjectRequest. bucket key)
@@ -138,12 +139,16 @@
        (.listObjectsV2 (client/lookup))
        (.getCommonPrefixes)))
 
-(defn generate-presigned-url [bucket key expiration-time http-method]
-  (let [method (HttpMethod/valueOf (-> http-method
-                                       name
-                                       str/upper-case))]
-    (.generatePresignedUrl (client/lookup)
-                           bucket
-                           key
-                           expiration-time
-                           method)))
+(defn generate-presigned-url
+  ([bucket key]
+   (generate-presigned-url bucket key nil))
+  ([bucket key expiration-date]
+   (generate-presigned-url bucket key expiration-date :get))
+  ([bucket key expiration-date http-method]
+   (let [method (HttpMethod/valueOf (-> http-method
+                                        name
+                                        str/upper-case))
+         request (cond-> (GeneratePresignedUrlRequest. bucket key)
+                   expiration-date (.withExpiration expiration-date)
+                   http-method     (.withMethod http-method))]
+     (.generatePresignedUrl (client/lookup) request))))

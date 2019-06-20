@@ -48,8 +48,10 @@
 
 (defn generate-presigned-url
   "Returns a pre-signed URL for accessing an Amazon S3 resource"
+  ([bucket key]
+   (generate-presigned-url bucket key nil))
   ([bucket key expiration-date]
-   (generate-presigned-url bucket key expiration-date :get))
+   (generate-presigned-url bucket key expiration-date nil))
   ([bucket key expiration-date http-method]
    (error-as-value
     (ob/generate-presigned-url bucket key expiration-date http-method))))
