@@ -150,5 +150,5 @@
                                         str/upper-case))
          request (cond-> (GeneratePresignedUrlRequest. bucket key)
                    expiration-date (.withExpiration expiration-date)
-                   http-method     (.withMethod http-method))]
+                   method          (.withMethod method))]
      (.generatePresignedUrl (client/lookup) request))))
