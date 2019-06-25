@@ -8,6 +8,7 @@
    [s3c.client :as client]
    [s3c.acl :as acl])
   (:import
+   (com.amazonaws HttpMethod)
    (com.amazonaws.services.s3.model
     ListObjectsV2Request
     GetObjectRequest
@@ -18,7 +19,8 @@
     ObjectMetadata
     AccessControlList
     GroupGrantee
-    Permission)))
+    Permission
+    GeneratePresignedUrlRequest)))
 
 (defn delete [bucket key]
   (->> (doto (DeleteObjectRequest. bucket key)
@@ -136,3 +138,17 @@
          (.withPrefix prefix))
        (.listObjectsV2 (client/lookup))
        (.getCommonPrefixes)))
+
+(defn generate-presigned-url
+  ([bucket key]
+   (generate-presigned-url bucket key nil))
+  ([bucket key expiration-date]
+   (generate-presigned-url bucket key expiration-date :get))
+  ([bucket key expiration-date http-method]
+   (let [method (HttpMethod/valueOf (-> http-method
+                                        name
+                                        str/upper-case))
+         request (cond-> (GeneratePresignedUrlRequest. bucket key)
+                   expiration-date (.withExpiration expiration-date)
+                   method          (.withMethod method))]
+     (.generatePresignedUrl (client/lookup) request))))
