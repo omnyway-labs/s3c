@@ -4,8 +4,8 @@
   com.google.guava/guava {:mvn/version "22.0"},
   omnyway-labs/saw
   {:git/url "https://github.com/omnyway-labs/saw.git",
-   :sha "ffd64ef09730dd953a8ca1dbc83b84e28631a7d0",
-   :time "2019-05-18T01:56:49.000+0000",
-   :tag "0.1.20"},
+   :sha "9f800666addede6847eb29ee3b771f70943e1d5a",
+   :time "2020-04-11T17:38:29.000+0000",
+   :tag "0.2.7"},
   org.clojure/clojure {:mvn/version "1.9.0"},
   org.clojure/core.cache {:mvn/version "0.7.2"}}}

@@ -10,12 +10,12 @@
 (defn lookup []
   @client)
 
-(defn make [region]
+(defn make []
   (-> (AmazonS3ClientBuilder/standard)
       (.withCredentials (saw/creds))
-      (.withRegion region)
+      (.withRegion (saw/region))
       .build))
 
-(defn init! [{:keys [region] :as auth}]
+(defn init! [auth]
   (saw/login auth)
-  (reset! client (make region)))
+  (reset! client (make)))
