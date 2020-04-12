@@ -4,7 +4,6 @@
    [clojure.string :as str]
    [clojure.java.io :as io]
    [saw.core :as saw]
-   [saw.util :refer [error-as-value]]
    [s3c.client :as client]
    [s3c.acl :as acl])
   (:import

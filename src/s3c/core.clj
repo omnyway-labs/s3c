@@ -1,7 +1,7 @@
 (ns s3c.core
   (:refer-clojure :exclude [get select])
   (:require
-   [saw.util :refer [error-as-value]]
+   [saw.error :refer [error-as-value]]
    [s3c.client :as client]
    [s3c.acl :as acl]
    [s3c.object :as ob]
